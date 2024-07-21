@@ -2,7 +2,6 @@ import time
 import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
-import logging
 
 
 class DeletionHandler(FileSystemEventHandler):
