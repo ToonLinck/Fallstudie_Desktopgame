@@ -9,6 +9,10 @@ class MyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
+        self.layout = QtWidgets.QVBoxLayout()
+
+
+
         
 
 def get_wallpaper():
@@ -38,7 +42,19 @@ if __name__ == "__main__":
     if(True):
         app = QtWidgets.QApplication([])
 
+
+
         widget = MyWidget()
+
+        widget.setStyleSheet(f"""
+            QMainWindow {{
+                background-image: url({wallpaperPath});
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover; /* or contain */
+            }}
+        """)
+
         widget.resize( main_monitor.width,main_monitor.height)
         widget.show()
 
