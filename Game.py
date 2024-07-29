@@ -126,7 +126,7 @@ class MyWidget(QWidget):
 
     breakout_ball = BreakoutBall()
     breakout_paddle = BreakoutPaddle()
-    breakout_icons = BreakoutIcon[0]
+    breakout_icons = []
 
     def gen_main_widget(self, monitor_dimensions): #creates the main widget and background image
         self.centralwidget = QWidget()
@@ -145,8 +145,8 @@ class MyWidget(QWidget):
         self.setCentralWidget = BGImageLabel
 
     def gen_breakout_icons():
-        #returns array of breakoutIcons modeled after the desktop icons located on monitor 1
-        return BreakoutIcon[0]
+        #returns list of breakoutIcons modeled after the desktop icons located on monitor 1
+        return []
 
     def __init__(self,monitor_dimensions):
         super().__init__()
@@ -177,6 +177,16 @@ if __name__ == "__main__":  #the main mehtod
         while True:
             widget.breakout_ball.move()
             widget.breakout_ball.draw()
+
+            #collision mit icons wird geprüft
+            for icon in widget.breakout_icons:
+                if widget.breakout_ball.position == icon.position:
+                    #delete icon from breakout_icons
+                    widget.breakout_ball.hit_obstacle()
+                    
+            #check if no icons are left
+            if widget.breakout_icons.count == 0:
+                end_game(True, args.fileName)
 
             widget.breakout_paddle.draw()
 
