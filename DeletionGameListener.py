@@ -2,29 +2,35 @@ import os
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
+import subprocess
 
-class DeletionHandler(FileSystemEventHandler):                              # kriert die Klasse DeletionHandler
-    def on_deleted(self, event: FileSystemEvent):                           # kriert die on_deleted Methode der Klasse
-        print(event.src_path)
-        print("file deleted")
+class DeletionHandler(FileSystemEventHandler):                              # creates the DeletionHandler class
+    def on_deleted(self, event: FileSystemEvent):                           # creates the on_deleted method
+        splitted_path = str(event.src_path).split("\\",)
+        length = len(splitted_path)-1
+        file_name = splitted_path[length]
+        print(f"File '{file_name}' got deleted.")
+        
+        subprocess.call(["python","Game.py",file_name])                     # calls the Game.py and parses the name of the deleted file
+        return
 
-desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')  # holt den Pfad zum Desktop mittles der Umgebungsvariable USERPROFILE
+desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')  # gets the path to the desctop with the environment variable USERPROFILE
 
-observer = Observer()                                                       # kreirt einen Observer von der watchdog Bibliothek
-event_handler = DeletionHandler()                                           # kreiert einen DelistionHandler
+observer = Observer()                                                       # creates a observer from the watchdog library
+event_handler = DeletionHandler()                                           # creates a DelistionHandler
 
-watch = observer.schedule(event_handler, desktop, recursive=True)           # plant die Überwachung vom Desktop und ruft den DeletionHandler auf
+watch = observer.schedule(event_handler, desktop, recursive=True)           # schedules the watcher of desctop and calls the DeletionHandler
 
-observer.start()                                                            # startet den Observer                                                                
+observer.start()                                                            # starts the observer                                                                
 
 try:
-    while (observer.is_alive):                                              # checkt ob der Thread noch aktiv ist
-        time.sleep(1)                                                       # Ist nötig, da man das Programm sonst nicht beenden kann
-except KeyboardInterrupt:                                                   # checkt ob strg C in der Konsole gedrückt wurde
-    observer.stop()                                                         # deaktiviert den Thread
-    observer.join()                                                         # blockt den Thread
+    while (observer.is_alive):                                              # checks if the thread is still activ
+        time.sleep(1)                                                       # Necessary because the programm cant be stopped clean without it
+except KeyboardInterrupt:                                                   # checks if strg C has been pressed in the console
+    observer.stop()                                                         # deactivates the thread
+    observer.join()                                                         # blocks the thread
     print("stopped all processes of breakout listener")
 finally:
     observer.stop()
     observer.join()
-    print("Stuff happend")
+    print("Program stopped")
