@@ -7,6 +7,7 @@ import imageio as iio
 from screeninfo import get_monitors
 import pythoncom
 import win32com
+from JsonHandler import JsonHandler
 
 #Gibt den Pfad des Desktop-Wallpapers zurueck
 def get_wallpaper():
@@ -41,15 +42,23 @@ def recreate_Deleted_File(file_name):
 def find_File_in_Bin(file_name):
     pass
 
-def end_game(has_won, deleted_file_name):
+def end_game(has_won, deleted_file_name, time):
     if has_won:
-        #create log
+        update_highscore(time)          
         #close Game
         pass
     else:
         recreate_Deleted_File(deleted_file_name)
         #close game
         pass
+
+def update_highscore(new_time):        #Update the saved highscore if the current time is lower than the saved time
+    JsonHandler.load_json("Data.json")
+    current_time = JsonHandler.get_filtered_content("Highscore")
+
+    if new_time < current_time:
+        JsonHandler.write_json({"Highscore": new_time })
+
 
 class BreakoutBall():               #The object of the "Ball"
 
@@ -127,6 +136,7 @@ class MyWidget(QWidget):
     breakout_ball = BreakoutBall()
     breakout_paddle = BreakoutPaddle()
     breakout_icons = []
+    breakout_time_counter = QDateTimeEdit()
 
     def gen_main_widget(self, monitor_dimensions): #creates the main widget and background image
         self.centralwidget = QWidget()
@@ -143,6 +153,14 @@ class MyWidget(QWidget):
         BGImageLabel.setPixmap(pixmap) 
 
         self.setCentralWidget = BGImageLabel
+
+    def start_timer():
+        #starts timer
+        pass
+
+    def stop_timer():
+        #stops timer and returns time
+        pass
 
     def gen_breakout_icons():
         #returns list of breakoutIcons modeled after the desktop icons located on monitor 1
@@ -173,6 +191,7 @@ if __name__ == "__main__":  #the main mehtod
 
         widget.resize( main_monitor.width,main_monitor.height)
         widget.show()                                               #The created widget is started as a windows application
+        widget.start_timer()
 
         while True:
             widget.breakout_ball.move()
@@ -192,7 +211,7 @@ if __name__ == "__main__":  #the main mehtod
 
             bottom_wall_check = widget.breakout_ball.check_if_hit_wall()
             if bottom_wall_check:
-                end_game(False,args.fileName)
+                end_game(False,args.fileName, widget.stop_timer())
 
 
 
